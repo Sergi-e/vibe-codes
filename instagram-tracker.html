@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Follower Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --surface3: #222222;
+      --border: #2a2a2a;
+      --border-focus: #555;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --text-dim: #555;
+      --accent: #e1306c;
+      --accent2: #833ab4;
+      --accent3: #fd1d1d;
+      --gradient: linear-gradient(135deg, #833ab4, #e1306c, #fd1d1d, #fcb045);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 32px 24px 0;
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.3px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Drop Zone ── */
+    .drop-zone {
+      max-width: 760px;
+      margin: 0 auto 28px;
+      padding: 0 24px;
+    }
+    .drop-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .drop-area:hover,
+    .drop-area.drag-over {
+      border-color: var(--accent);
+      background: #1a0d13;
+    }
+    .drop-area input[type="file"] {
+      display: none;
+    }
+    .drop-icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+    .drop-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .drop-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .file-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      min-height: 0;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+      transition: all 0.2s;
+    }
+    .chip.loaded {
+      background: #0d1f12;
+      border-color: #2d6a3f;
+      color: #5de87e;
+    }
+    .chip.waiting {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text-dim);
+    }
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Tabs ── */
+    .tabs-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 12px 18px;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+    .badge {
+      background: var(--surface3);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      min-width: 22px;
+      text-align: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tab-btn.active .badge {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Tab Panels ── */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Search ── */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 14px;
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      padding: 10px 14px 10px 36px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input::placeholder { color: var(--text-dim); }
+    .search-input:focus { border-color: var(--border-focus); }
+
+    /* ── Empty / Placeholder ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+    .empty-state p { font-size: 14px; }
+    .empty-state .empty-hint { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+
+    /* ── User List ── */
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-sm);
+      transition: background 0.12s;
+    }
+    .user-row:hover { background: var(--surface2); }
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .avatar::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      background: var(--gradient);
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .user-row:hover .avatar::after { opacity: 1; }
+    .user-info { flex: 1; min-width: 0; }
+    .username {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-meta {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+    .visit-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: var(--surface3);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .visit-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    /* ── Count line ── */
+    .list-header {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      backdrop-filter: blur(10px);
+    }
+    footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📊</div>
+    <h1>Follower Tracker</h1>
+  </div>
+  <p class="subtitle">Analyze your Instagram followers — everything runs locally in your browser</p>
+</header>
+
+<div class="drop-zone">
+  <div class="drop-area" id="dropArea">
+    <input type="file" id="fileInput" multiple accept=".json" />
+    <div class="drop-icon">📂</div>
+    <div class="drop-title">Drop your Instagram JSON files here</div>
+    <div class="drop-hint">Or click to select — drop all 4 files at once</div>
+    <div class="file-chips" id="fileChips">
+      <span class="chip waiting" data-file="followers_1">
+        <span class="chip-dot"></span>followers_1.json
+      </span>
+      <span class="chip waiting" data-file="following">
+        <span class="chip-dot"></span>following.json
+      </span>
+      <span class="chip waiting" data-file="recently_unfollowed_profiles">
+        <span class="chip-dot"></span>recently_unfollowed_profiles.json
+      </span>
+      <span class="chip waiting" data-file="recent_follow_requests">
+        <span class="chip-dot"></span>recent_follow_requests.json
+      </span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="not-following-back">
+      Not following back <span class="badge" id="badge-not-following-back">—</span>
+    </button>
+    <button class="tab-btn" data-tab="unfollowed-me">
+      Recently unfollowed me <span class="badge" id="badge-unfollowed-me">—</span>
+    </button>
+    <button class="tab-btn" data-tab="pending-requests">
+      Pending requests <span class="badge" id="badge-pending-requests">—</span>
+    </button>
+  </div>
+
+  <!-- Tab 1 -->
+  <div class="tab-panel active" id="tab-not-following-back">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="search" placeholder="Search by username…" data-tab="not-following-back" />
+    </div>
+    <div class="list-header" id="count-not-following-back"></div>
+    <div class="user-list" id="list-not-following-back">
+      <div class="empty-state">
+        <div class="empty-icon">👆</div>
+        <p>Upload your Instagram data files above</p>
+        <p class="empty-hint">You need followers_1.json and following.json</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 2 -->
+  <div class="tab-panel" id="tab-unfollowed-me">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="search" placeholder="Search by username…" data-tab="unfollowed-me" />
+    </div>
+    <div class="list-header" id="count-unfollowed-me"></div>
+    <div class="user-list" id="list-unfollowed-me">
+      <div class="empty-state">
+        <div class="empty-icon">👆</div>
+        <p>Upload your Instagram data files above</p>
+        <p class="empty-hint">You need recently_unfollowed_profiles.json</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3 -->
+  <div class="tab-panel" id="tab-pending-requests">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="search" placeholder="Search by username…" data-tab="pending-requests" />
+    </div>
+    <div class="list-header" id="count-pending-requests"></div>
+    <div class="user-list" id="list-pending-requests">
+      <div class="empty-state">
+        <div class="empty-icon">👆</div>
+        <p>Upload your Instagram data files above</p>
+        <p class="empty-hint">You need recent_follow_requests.json</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>🔒 All data stays on your device — nothing is sent anywhere</span>
+</footer>
+
+<script>
+  /* ── State ── */
+  const state = {
+    followers: null,
+    following: null,
+    unfollowed: null,
+    pendingRequests: null,
+    loaded: {}
+  };
+
+  /* ── Parser for root-level array files (followers, unfollowed, requests) ── */
+  function parseList(data) {
+    const arr = Array.isArray(data) ? data : data[Object.keys(data)[0]];
+    return arr
+      .filter(item => item.string_list_data && item.string_list_data[0] && item.string_list_data[0].value)
+      .map(item => ({
+        username: item.string_list_data[0].value,
+        href: item.string_list_data[0].href,
+        timestamp: item.string_list_data[0].timestamp || null
+      }));
+  }
+
+  /* ── Parser for following.json — wrapped under relationships_following ── */
+  function parseFollowing(data) {
+    const arr = data.relationships_following || [];
+    console.log('[Debug] First entry in relationships_following:', JSON.stringify(arr[0]));
+    return arr.map(item => {
+      const sld = item.string_list_data || item.media_list_data || [];
+      const entry = sld[0] || {};
+      return {
+        username: entry.value || entry.href?.split('/').pop() || '',
+        href: entry.href || '',
+        timestamp: entry.timestamp || null
+      };
+    }).filter(item => item.username);
+  }
+
+  function parseFile(fileKey, text) {
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      console.error('[Tracker] JSON.parse failed for', fileKey, e);
+      return [];
+    }
+
+    console.log('[Tracker] Raw JSON for', fileKey,
+      '— type:', Array.isArray(json) ? 'array' : typeof json,
+      '— keys:', Array.isArray(json) ? '(array)' : Object.keys(json));
+
+    try {
+      const users = fileKey === 'following' ? parseFollowing(json) : parseList(json);
+      console.log(`[Tracker] Parsed "${fileKey}" → ${users.length} users`,
+        users.slice(0, 3).map(u => u.username));
+      return users;
+    } catch (e) {
+      console.error('[Tracker] parse failed for', fileKey, e);
+      return [];
+    }
+  }
+
+  /* ── File key lookup ── */
+  const FILE_MAP = {
+    'followers_1':                  { stateKey: 'followers' },
+    'following':                    { stateKey: 'following' },
+    'recently_unfollowed_profiles': { stateKey: 'unfollowed' },
+    'recent_follow_requests':       { stateKey: 'pendingRequests' }
+  };
+
+  function detectFileKey(filename) {
+    // Strip path separators in case full path is passed
+    const bare = filename.split(/[/\\]/).pop();
+    const base = bare.replace(/\.json$/i, '').toLowerCase().trim();
+
+    console.log('[Tracker] Detecting file:', filename, '→ base:', base);
+
+    // Exact match first
+    for (const key of Object.keys(FILE_MAP)) {
+      if (base === key) {
+        console.log('[Tracker] Exact match:', key);
+        return key;
+      }
+    }
+
+    // Prefix/substring match (handles followers_1 (1).json style copies)
+    for (const key of Object.keys(FILE_MAP)) {
+      if (base.startsWith(key) || base.includes(key)) {
+        console.log('[Tracker] Fuzzy match:', base, '→', key);
+        return key;
+      }
+    }
+
+    console.warn('[Tracker] Unrecognized file — no match found for:', filename);
+    return null;
+  }
+
+  /* ── Process a loaded file ── */
+  function processFile(fileKey, users) {
+    const stateKey = FILE_MAP[fileKey].stateKey;
+    state[stateKey] = users;
+    state.loaded[fileKey] = true;
+    console.log('[Tracker] State updated:', stateKey, '=', users.length, 'users');
+    markChip(fileKey);
+    refreshAll();
+  }
+
+  /* ── Render ── */
+  function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(ts * 1000);
+    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  function getInitial(username) {
+    return (username?.[0] ?? '?').toUpperCase();
+  }
+
+  function buildRow(user) {
+    const date = user.timestamp ? formatDate(user.timestamp) : '';
+    return `
+      <div class="user-row">
+        <div class="avatar">${getInitial(user.username)}</div>
+        <div class="user-info">
+          <div class="username">${escHtml(user.username)}</div>
+          ${date ? `<div class="user-meta">Since ${date}</div>` : ''}
+        </div>
+        <a class="visit-btn" href="${escHtml(user.href)}" target="_blank" rel="noopener noreferrer">
+          Visit ↗
+        </a>
+      </div>
+    `;
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function renderList(tabId, users, query) {
+    const listEl = document.getElementById('list-' + tabId);
+    const countEl = document.getElementById('count-' + tabId);
+    const badgeEl = document.getElementById('badge-' + tabId);
+
+    if (!users) return; // not loaded yet — keep placeholder
+
+    const filtered = query
+      ? users.filter(u => u && u.username && u.username.toLowerCase().includes(query.toLowerCase()))
+      : users;
+
+    badgeEl.textContent = users.length;
+
+    if (filtered.length === 0) {
+      const msg = query ? 'No results for "' + escHtml(query) + '"' : 'Nothing to show here';
+      listEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>${msg}</p></div>`;
+      countEl.textContent = '';
+      return;
+    }
+
+    countEl.textContent = `Showing ${filtered.length} of ${users.length} accounts`;
+    listEl.innerHTML = filtered.map(buildRow).join('');
+  }
+
+  const searches = { 'not-following-back': '', 'unfollowed-me': '', 'pending-requests': '' };
+
+  function refreshAll() {
+    /* Tab 1: following but not in followers */
+    if (state.following !== null && state.followers !== null) {
+      const followerSet = new Set(
+        state.followers.filter(u => u && u.username).map(u => u.username.toLowerCase())
+      );
+      const notBack = state.following.filter(u => u && u.username && !followerSet.has(u.username.toLowerCase()));
+      renderList('not-following-back', notBack, searches['not-following-back']);
+    }
+
+    /* Tab 2 */
+    if (state.unfollowed !== null) {
+      renderList('unfollowed-me', state.unfollowed, searches['unfollowed-me']);
+    }
+
+    /* Tab 3 */
+    if (state.pendingRequests !== null) {
+      renderList('pending-requests', state.pendingRequests, searches['pending-requests']);
+    }
+  }
+
+  /* ── Chips ── */
+  function markChip(fileKey) {
+    const chip = document.querySelector(`[data-file="${fileKey}"]`);
+    if (chip) {
+      chip.classList.remove('waiting');
+      chip.classList.add('loaded');
+    }
+  }
+
+  /* ── File reading ── */
+  function readFiles(files) {
+    const list = Array.from(files);
+    console.log('[Tracker] readFiles called with', list.length, 'file(s):', list.map(f => f.name));
+    if (list.length === 0) {
+      console.warn('[Tracker] readFiles: no files received');
+      return;
+    }
+    list.forEach(file => {
+      const fileKey = detectFileKey(file.name);
+      if (!fileKey) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const users = parseFile(fileKey, e.target.result);
+        processFile(fileKey, users);
+      };
+      reader.onerror = () => console.error('[Tracker] FileReader error for', file.name);
+      reader.readAsText(file);
+    });
+  }
+
+  /* ── Drag & Drop ── */
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+
+  // Prevent the overlaid file input from silently eating drag events —
+  // pointer-events:none lets drags fall through to the parent div while
+  // programmatic .click() still opens the file picker on user click.
+  fileInput.style.pointerEvents = 'none';
+
+  dropArea.addEventListener('click', () => fileInput.click());
+
+  dropArea.addEventListener('dragenter', e => { e.preventDefault(); e.stopPropagation(); });
+  dropArea.addEventListener('dragover',  e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropArea.classList.add('drag-over');
+  });
+  dropArea.addEventListener('dragleave', e => {
+    // Only remove highlight when leaving the drop area itself, not a child
+    if (!dropArea.contains(e.relatedTarget)) {
+      dropArea.classList.remove('drag-over');
+    }
+  });
+  dropArea.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    dropArea.classList.remove('drag-over');
+    console.log('[Tracker] Drop event fired, files:', e.dataTransfer.files.length);
+    readFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', e => {
+    console.log('[Tracker] File input change, files:', e.target.files.length);
+    readFiles(e.target.files);
+    // Reset so the same file can be re-selected if needed
+    fileInput.value = '';
+  });
+
+  /* ── Tabs ── */
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── Search ── */
+  document.querySelectorAll('.search-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const tab = input.dataset.tab;
+      searches[tab] = input.value;
+      refreshAll();
+    });
+  });
+</script>
+</body>
+</html>
