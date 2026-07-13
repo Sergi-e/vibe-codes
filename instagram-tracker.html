@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instagram Follower Tracker</title>
+  <title>Follower Tracker — Instagram Data Analyzer</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -33,20 +33,396 @@
       line-height: 1.5;
     }
 
-    /* ── Header ── */
-    header {
-      padding: 32px 24px 0;
+    /* ── View switching ── */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ════════════════════════════════════════
+       LANDING PAGE
+    ════════════════════════════════════════ */
+
+    /* ── Nav bar ── */
+    .landing-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .nav-logo-text {
+      font-size: 16px;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+    .hero-badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5de87e;
+      flex-shrink: 0;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 58px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+    }
+    .hero-tagline {
+      font-size: clamp(15px, 2.2vw, 18px);
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gradient);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.15s;
+      letter-spacing: 0.1px;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s;
+    }
+    .btn-secondary:hover { background: var(--surface3); border-color: #444; transform: translateY(-1px); }
+    .btn-secondary:active { transform: translateY(0); }
+
+    /* ── Features ── */
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .section-title {
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 40px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 700px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .feature-card:hover { border-color: #3a3a3a; background: var(--surface2); }
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── How to use ── */
+    .howto-section {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
+    }
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .step {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; min-width: 0; }
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .step-body ul, .step-body ol {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .step-body li {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .step-body li strong { color: var(--text); }
+    .step-body li code {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 12px;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      color: #fcb045;
+    }
+    .step-files {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .file-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      color: #fcb045;
+    }
+
+    .tips-box {
+      margin-top: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .tips-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .tips-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 0;
+      list-style: none;
+    }
+    .tips-list li {
+      font-size: 13px;
+      color: var(--text-muted);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.55;
+    }
+    .tips-list li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--text-dim);
+    }
+
+    /* ── Privacy banner ── */
+    .privacy-banner {
+      max-width: 760px;
+      margin: 0 auto 24px;
+      padding: 0 24px;
+    }
+    .privacy-inner {
+      background: #0d1f12;
+      border: 1px solid #2d6a3f;
+      border-radius: var(--radius);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: #a8e6bb;
+    }
+    .privacy-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .privacy-inner strong { color: #5de87e; }
+
+    /* ── CTA block ── */
+    .cta-block {
+      text-align: center;
+      padding: 24px 24px 80px;
+    }
+    .cta-block p {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 14px;
+    }
+
+    /* ── Landing footer ── */
+    .landing-footer {
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 12px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ════════════════════════════════════════
+       TRACKER VIEW
+    ════════════════════════════════════════ */
+
+    .tracker-topbar {
+      padding: 16px 24px;
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px 0;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--text); }
+
+    /* ── Tracker Header ── */
+    .tracker-header {
+      padding: 12px 24px 0;
       max-width: 760px;
       margin: 0 auto;
       text-align: center;
     }
-    .logo {
+    .tracker-logo {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 6px;
     }
-    .logo-icon {
+    .tracker-logo-icon {
       width: 36px;
       height: 36px;
       border-radius: 10px;
@@ -56,7 +432,7 @@
       justify-content: center;
       font-size: 18px;
     }
-    h1 {
+    .tracker-title {
       font-size: 22px;
       font-weight: 700;
       background: var(--gradient);
@@ -65,7 +441,7 @@
       background-clip: text;
       letter-spacing: -0.3px;
     }
-    .subtitle {
+    .tracker-subtitle {
       font-size: 13px;
       color: var(--text-muted);
       margin-bottom: 28px;
@@ -92,24 +468,10 @@
       border-color: var(--accent);
       background: #1a0d13;
     }
-    .drop-area input[type="file"] {
-      display: none;
-    }
-    .drop-icon {
-      font-size: 36px;
-      margin-bottom: 10px;
-    }
-    .drop-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .drop-hint {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
+    .drop-area input[type="file"] { display: none; }
+    .drop-icon { font-size: 36px; margin-bottom: 10px; }
+    .drop-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .drop-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
     .file-chips {
       display: flex;
       flex-wrap: wrap;
@@ -128,16 +490,8 @@
       border: 1px solid;
       transition: all 0.2s;
     }
-    .chip.loaded {
-      background: #0d1f12;
-      border-color: #2d6a3f;
-      color: #5de87e;
-    }
-    .chip.waiting {
-      background: var(--surface2);
-      border-color: var(--border);
-      color: var(--text-dim);
-    }
+    .chip.loaded { background: #0d1f12; border-color: #2d6a3f; color: #5de87e; }
+    .chip.waiting { background: var(--surface2); border-color: var(--border); color: var(--text-dim); }
     .chip-dot {
       width: 7px;
       height: 7px;
@@ -146,8 +500,8 @@
       flex-shrink: 0;
     }
 
-    /* ── Main ── */
-    main {
+    /* ── Tracker main ── */
+    .tracker-main {
       max-width: 760px;
       margin: 0 auto;
       padding: 0 24px 80px;
@@ -180,10 +534,7 @@
       gap: 7px;
     }
     .tab-btn:hover { color: var(--text); }
-    .tab-btn.active {
-      color: var(--text);
-      border-bottom-color: var(--accent);
-    }
+    .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
     .badge {
       background: var(--surface3);
       color: var(--text-muted);
@@ -195,20 +546,14 @@
       text-align: center;
       transition: background 0.2s, color 0.2s;
     }
-    .tab-btn.active .badge {
-      background: var(--accent);
-      color: #fff;
-    }
+    .tab-btn.active .badge { background: var(--accent); color: #fff; }
 
     /* ── Tab Panels ── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
     /* ── Search ── */
-    .search-wrap {
-      position: relative;
-      margin-bottom: 16px;
-    }
+    .search-wrap { position: relative; margin-bottom: 16px; }
     .search-icon {
       position: absolute;
       left: 13px;
@@ -232,22 +577,14 @@
     .search-input::placeholder { color: var(--text-dim); }
     .search-input:focus { border-color: var(--border-focus); }
 
-    /* ── Empty / Placeholder ── */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
+    /* ── Empty ── */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
     .empty-state p { font-size: 14px; }
     .empty-state .empty-hint { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
 
     /* ── User List ── */
-    .user-list {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    .user-list { display: flex; flex-direction: column; gap: 2px; }
     .user-row {
       display: flex;
       align-items: center;
@@ -291,11 +628,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .user-meta {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 1px;
-    }
+    .user-meta { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
     .visit-btn {
       flex-shrink: 0;
       display: inline-flex;
@@ -311,22 +644,13 @@
       border: 1px solid var(--border);
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
-    .visit-btn:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
+    .visit-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-    /* ── Count line ── */
-    .list-header {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 10px;
-      padding: 0 4px;
-    }
+    /* ── Count ── */
+    .list-header { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; padding: 0 4px; }
 
-    /* ── Footer ── */
-    footer {
+    /* ── Tracker footer ── */
+    .tracker-footer {
       text-align: center;
       padding: 20px 24px;
       font-size: 12px;
@@ -339,118 +663,298 @@
       background: var(--bg);
       backdrop-filter: blur(10px);
     }
-    footer span {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
+    .tracker-footer span { display: inline-flex; align-items: center; gap: 5px; }
 
     /* ── Scrollbar ── */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .landing-nav { padding: 16px 20px; }
+      .hero { padding: 48px 20px 40px; }
+      .section { padding: 40px 20px; }
+      .howto-section { padding: 0 20px 48px; }
+      .step { padding: 20px 20px; gap: 16px; }
+      .privacy-banner { padding: 0 20px; }
+      .cta-block { padding: 20px 20px 60px; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">
-    <div class="logo-icon">📊</div>
-    <h1>Follower Tracker</h1>
-  </div>
-  <p class="subtitle">Analyze your Instagram followers — everything runs locally in your browser</p>
-</header>
+<!-- ════════════════════════════════════
+     VIEW 1 — LANDING PAGE
+════════════════════════════════════ -->
+<div id="view-landing" class="view active">
 
-<div class="drop-zone">
-  <div class="drop-area" id="dropArea">
-    <input type="file" id="fileInput" multiple accept=".json" />
-    <div class="drop-icon">📂</div>
-    <div class="drop-title">Drop your Instagram JSON files here</div>
-    <div class="drop-hint">Or click to select — drop all 4 files at once</div>
-    <div class="file-chips" id="fileChips">
-      <span class="chip waiting" data-file="followers_1">
-        <span class="chip-dot"></span>followers_1.json
-      </span>
-      <span class="chip waiting" data-file="following">
-        <span class="chip-dot"></span>following.json
-      </span>
-      <span class="chip waiting" data-file="recently_unfollowed_profiles">
-        <span class="chip-dot"></span>recently_unfollowed_profiles.json
-      </span>
-      <span class="chip waiting" data-file="recent_follow_requests">
-        <span class="chip-dot"></span>recent_follow_requests.json
-      </span>
+  <!-- Nav -->
+  <nav class="landing-nav">
+    <a class="nav-logo" href="#">
+      <div class="nav-logo-icon">📊</div>
+      <span class="nav-logo-text">Follower Tracker</span>
+    </a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      100% free &amp; runs in your browser
     </div>
+    <h1>Follower Tracker</h1>
+    <p class="hero-tagline">See who doesn't follow you back — no login, no data collection, just your Instagram export files</p>
+    <button class="btn-primary" onclick="document.getElementById('how-to').scrollIntoView({behavior:'smooth'})">
+      Get Started ↓
+    </button>
+  </section>
+
+  <!-- Feature cards -->
+  <section class="section">
+    <p class="section-label">What you get</p>
+    <h2 class="section-title">Three insights, zero guesswork</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🙈</div>
+        <div class="feature-title">Not following back</div>
+        <div class="feature-desc">See everyone you follow who doesn't follow you back — sorted and searchable.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📉</div>
+        <div class="feature-title">Recent unfollowers</div>
+        <div class="feature-desc">Find out who unfollowed you recently based on your Instagram export data.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⏳</div>
+        <div class="feature-title">Pending requests</div>
+        <div class="feature-desc">Track follow requests you've sent that were never accepted by the other account.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to use -->
+  <section class="howto-section" id="how-to">
+    <p class="section-label" style="text-align:center">How to use</p>
+    <h2 class="section-title" style="text-align:center;margin-bottom:28px">Three steps to get your data</h2>
+
+    <div class="steps-list">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Request your Instagram data</div>
+          <ol>
+            <li>Open Instagram and go to your profile</li>
+            <li>Tap the menu <strong>(☰)</strong> → Settings → Accounts Center</li>
+            <li>Tap <strong>"Your information and permissions"</strong> → <strong>"Download your information"</strong></li>
+            <li>Select your Instagram account</li>
+            <li>Tap <strong>"Customize information"</strong> and select only <strong>Followers and following</strong></li>
+            <li>Tap <strong>"Date range"</strong> and set it to <strong>All time</strong> — selecting a shorter range gives incomplete results</li>
+            <li>Tap <strong>"Format"</strong> and set it to <strong>JSON</strong>, not HTML</li>
+            <li>Submit — Instagram will email you when the file is ready, usually within a few minutes up to 48 hours</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Get your files</div>
+          <ol>
+            <li>Open the email from Instagram and download the ZIP file</li>
+            <li>Extract the ZIP — inside you'll find a folder with several files</li>
+            <li>You only need these four files:</li>
+          </ol>
+          <div class="step-files">
+            <span class="file-pill">📄 followers_1.json</span>
+            <span class="file-pill">📄 following.json</span>
+            <span class="file-pill">📄 recently_unfollowed_profiles.json</span>
+            <span class="file-pill">📄 recent_follow_requests.json</span>
+          </div>
+          <ol style="margin-top:12px">
+            <li>Ignore everything else in the folder</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Drop them into the app</div>
+          <ol>
+            <li>Click <strong>"Open Tracker"</strong> below</li>
+            <li>Drag and drop all 4 files at once into the upload area</li>
+            <li>Your results will appear instantly</li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Tips -->
+    <div class="tips-box">
+      <div class="tips-title">💡 Tips</div>
+      <ul class="tips-list">
+        <li>Always use <strong>"All time"</strong> as the date range or your followers list will be incomplete</li>
+        <li>Re-download your data regularly to keep results fresh</li>
+        <li>Your files never leave your device — everything runs in your browser</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Privacy banner -->
+  <div class="privacy-banner">
+    <div class="privacy-inner">
+      <span class="privacy-icon">🔒</span>
+      <span><strong>100% private</strong> — your files never leave your device. No servers, no accounts, no tracking.</span>
+    </div>
+  </div>
+
+  <!-- Open Tracker CTA -->
+  <div class="cta-block">
+    <button class="btn-primary" style="font-size:16px;padding:16px 40px;" onclick="showTracker()">
+      Open Tracker →
+    </button>
+    <p>No sign-up required &nbsp;·&nbsp; Works entirely offline</p>
+  </div>
+
+  <div class="landing-footer">
+    Built for privacy — all processing happens locally in your browser
   </div>
 </div>
 
-<main>
-  <div class="tabs-bar">
-    <button class="tab-btn active" data-tab="not-following-back">
-      Not following back <span class="badge" id="badge-not-following-back">—</span>
-    </button>
-    <button class="tab-btn" data-tab="unfollowed-me">
-      Recently unfollowed me <span class="badge" id="badge-unfollowed-me">—</span>
-    </button>
-    <button class="tab-btn" data-tab="pending-requests">
-      Pending requests <span class="badge" id="badge-pending-requests">—</span>
+
+<!-- ════════════════════════════════════
+     VIEW 2 — TRACKER
+════════════════════════════════════ -->
+<div id="view-tracker" class="view">
+
+  <!-- Back link -->
+  <div class="tracker-topbar">
+    <button class="back-link" onclick="showLanding()">
+      ← Back to home
     </button>
   </div>
 
-  <!-- Tab 1 -->
-  <div class="tab-panel active" id="tab-not-following-back">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" type="search" placeholder="Search by username…" data-tab="not-following-back" />
+  <!-- Header -->
+  <div class="tracker-header">
+    <div class="tracker-logo">
+      <div class="tracker-logo-icon">📊</div>
+      <span class="tracker-title">Follower Tracker</span>
     </div>
-    <div class="list-header" id="count-not-following-back"></div>
-    <div class="user-list" id="list-not-following-back">
-      <div class="empty-state">
-        <div class="empty-icon">👆</div>
-        <p>Upload your Instagram data files above</p>
-        <p class="empty-hint">You need followers_1.json and following.json</p>
+    <p class="tracker-subtitle">Analyze your Instagram followers — everything runs locally in your browser</p>
+  </div>
+
+  <!-- Drop zone -->
+  <div class="drop-zone">
+    <div class="drop-area" id="dropArea">
+      <input type="file" id="fileInput" multiple accept=".json" />
+      <div class="drop-icon">📂</div>
+      <div class="drop-title">Drop your Instagram JSON files here</div>
+      <div class="drop-hint">Or click to select — drop all 4 files at once</div>
+      <div class="file-chips" id="fileChips">
+        <span class="chip waiting" data-file="followers_1">
+          <span class="chip-dot"></span>followers_1.json
+        </span>
+        <span class="chip waiting" data-file="following">
+          <span class="chip-dot"></span>following.json
+        </span>
+        <span class="chip waiting" data-file="recently_unfollowed_profiles">
+          <span class="chip-dot"></span>recently_unfollowed_profiles.json
+        </span>
+        <span class="chip waiting" data-file="recent_follow_requests">
+          <span class="chip-dot"></span>recent_follow_requests.json
+        </span>
       </div>
     </div>
   </div>
 
-  <!-- Tab 2 -->
-  <div class="tab-panel" id="tab-unfollowed-me">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" type="search" placeholder="Search by username…" data-tab="unfollowed-me" />
+  <!-- Tabs + Results -->
+  <main class="tracker-main">
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="not-following-back">
+        Not following back <span class="badge" id="badge-not-following-back">—</span>
+      </button>
+      <button class="tab-btn" data-tab="unfollowed-me">
+        Recently unfollowed me <span class="badge" id="badge-unfollowed-me">—</span>
+      </button>
+      <button class="tab-btn" data-tab="pending-requests">
+        Pending requests <span class="badge" id="badge-pending-requests">—</span>
+      </button>
     </div>
-    <div class="list-header" id="count-unfollowed-me"></div>
-    <div class="user-list" id="list-unfollowed-me">
-      <div class="empty-state">
-        <div class="empty-icon">👆</div>
-        <p>Upload your Instagram data files above</p>
-        <p class="empty-hint">You need recently_unfollowed_profiles.json</p>
+
+    <!-- Tab 1 -->
+    <div class="tab-panel active" id="tab-not-following-back">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="search" placeholder="Search by username…" data-tab="not-following-back" />
+      </div>
+      <div class="list-header" id="count-not-following-back"></div>
+      <div class="user-list" id="list-not-following-back">
+        <div class="empty-state">
+          <div class="empty-icon">👆</div>
+          <p>Upload your Instagram data files above</p>
+          <p class="empty-hint">You need followers_1.json and following.json</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Tab 3 -->
-  <div class="tab-panel" id="tab-pending-requests">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" type="search" placeholder="Search by username…" data-tab="pending-requests" />
-    </div>
-    <div class="list-header" id="count-pending-requests"></div>
-    <div class="user-list" id="list-pending-requests">
-      <div class="empty-state">
-        <div class="empty-icon">👆</div>
-        <p>Upload your Instagram data files above</p>
-        <p class="empty-hint">You need recent_follow_requests.json</p>
+    <!-- Tab 2 -->
+    <div class="tab-panel" id="tab-unfollowed-me">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="search" placeholder="Search by username…" data-tab="unfollowed-me" />
+      </div>
+      <div class="list-header" id="count-unfollowed-me"></div>
+      <div class="user-list" id="list-unfollowed-me">
+        <div class="empty-state">
+          <div class="empty-icon">👆</div>
+          <p>Upload your Instagram data files above</p>
+          <p class="empty-hint">You need recently_unfollowed_profiles.json</p>
+        </div>
       </div>
     </div>
-  </div>
-</main>
 
-<footer>
-  <span>🔒 All data stays on your device — nothing is sent anywhere</span>
-</footer>
+    <!-- Tab 3 -->
+    <div class="tab-panel" id="tab-pending-requests">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="search" placeholder="Search by username…" data-tab="pending-requests" />
+      </div>
+      <div class="list-header" id="count-pending-requests"></div>
+      <div class="user-list" id="list-pending-requests">
+        <div class="empty-state">
+          <div class="empty-icon">👆</div>
+          <p>Upload your Instagram data files above</p>
+          <p class="empty-hint">You need recent_follow_requests.json</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="tracker-footer">
+    <span>🔒 All data stays on your device — nothing is sent anywhere</span>
+  </footer>
+</div>
+
 
 <script>
+  /* ── View switching ── */
+  function showTracker() {
+    document.getElementById('view-landing').classList.remove('active');
+    document.getElementById('view-tracker').classList.add('active');
+    window.scrollTo({ top: 0 });
+  }
+  function showLanding() {
+    document.getElementById('view-tracker').classList.remove('active');
+    document.getElementById('view-landing').classList.add('active');
+    window.scrollTo({ top: 0 });
+  }
+
   /* ── State ── */
   const state = {
     followers: null,
@@ -460,7 +964,7 @@
     loaded: {}
   };
 
-  /* ── Parser for root-level array files (followers, unfollowed, requests) ── */
+  /* ── Parser for root-level array files ── */
   function parseList(data) {
     const arr = Array.isArray(data) ? data : data[Object.keys(data)[0]];
     return arr
@@ -472,10 +976,9 @@
       }));
   }
 
-  /* ── Parser for following.json — wrapped under relationships_following ── */
+  /* ── Parser for following.json ── */
   function parseFollowing(data) {
     const arr = data.relationships_following || [];
-    console.log('[Debug] First entry in relationships_following:', JSON.stringify(arr[0]));
     return arr.map(item => {
       const sld = item.string_list_data || item.media_list_data || [];
       const entry = sld[0] || {};
@@ -489,26 +992,11 @@
 
   function parseFile(fileKey, text) {
     let json;
-    try {
-      json = JSON.parse(text);
-    } catch (e) {
-      console.error('[Tracker] JSON.parse failed for', fileKey, e);
-      return [];
-    }
-
-    console.log('[Tracker] Raw JSON for', fileKey,
-      '— type:', Array.isArray(json) ? 'array' : typeof json,
-      '— keys:', Array.isArray(json) ? '(array)' : Object.keys(json));
-
+    try { json = JSON.parse(text); } catch (e) { console.error('[Tracker] JSON.parse failed for', fileKey, e); return []; }
     try {
       const users = fileKey === 'following' ? parseFollowing(json) : parseList(json);
-      console.log(`[Tracker] Parsed "${fileKey}" → ${users.length} users`,
-        users.slice(0, 3).map(u => u.username));
       return users;
-    } catch (e) {
-      console.error('[Tracker] parse failed for', fileKey, e);
-      return [];
-    }
+    } catch (e) { console.error('[Tracker] parse failed for', fileKey, e); return []; }
   }
 
   /* ── File key lookup ── */
@@ -520,38 +1008,21 @@
   };
 
   function detectFileKey(filename) {
-    // Strip path separators in case full path is passed
     const bare = filename.split(/[/\\]/).pop();
     const base = bare.replace(/\.json$/i, '').toLowerCase().trim();
-
-    console.log('[Tracker] Detecting file:', filename, '→ base:', base);
-
-    // Exact match first
     for (const key of Object.keys(FILE_MAP)) {
-      if (base === key) {
-        console.log('[Tracker] Exact match:', key);
-        return key;
-      }
+      if (base === key) return key;
     }
-
-    // Prefix/substring match (handles followers_1 (1).json style copies)
     for (const key of Object.keys(FILE_MAP)) {
-      if (base.startsWith(key) || base.includes(key)) {
-        console.log('[Tracker] Fuzzy match:', base, '→', key);
-        return key;
-      }
+      if (base.startsWith(key) || base.includes(key)) return key;
     }
-
-    console.warn('[Tracker] Unrecognized file — no match found for:', filename);
     return null;
   }
 
-  /* ── Process a loaded file ── */
   function processFile(fileKey, users) {
     const stateKey = FILE_MAP[fileKey].stateKey;
     state[stateKey] = users;
     state.loaded[fileKey] = true;
-    console.log('[Tracker] State updated:', stateKey, '=', users.length, 'users');
     markChip(fileKey);
     refreshAll();
   }
@@ -559,12 +1030,16 @@
   /* ── Render ── */
   function formatDate(ts) {
     if (!ts) return '';
-    const d = new Date(ts * 1000);
-    return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    return new Date(ts * 1000).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   }
+  function getInitial(username) { return (username?.[0] ?? '?').toUpperCase(); }
 
-  function getInitial(username) {
-    return (username?.[0] ?? '?').toUpperCase();
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   function buildRow(user) {
@@ -576,41 +1051,26 @@
           <div class="username">${escHtml(user.username)}</div>
           ${date ? `<div class="user-meta">Since ${date}</div>` : ''}
         </div>
-        <a class="visit-btn" href="${escHtml(user.href)}" target="_blank" rel="noopener noreferrer">
-          Visit ↗
-        </a>
+        <a class="visit-btn" href="${escHtml(user.href)}" target="_blank" rel="noopener noreferrer">Visit ↗</a>
       </div>
     `;
-  }
-
-  function escHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
   }
 
   function renderList(tabId, users, query) {
     const listEl = document.getElementById('list-' + tabId);
     const countEl = document.getElementById('count-' + tabId);
     const badgeEl = document.getElementById('badge-' + tabId);
-
-    if (!users) return; // not loaded yet — keep placeholder
-
+    if (!users) return;
     const filtered = query
       ? users.filter(u => u && u.username && u.username.toLowerCase().includes(query.toLowerCase()))
       : users;
-
     badgeEl.textContent = users.length;
-
     if (filtered.length === 0) {
       const msg = query ? 'No results for "' + escHtml(query) + '"' : 'Nothing to show here';
       listEl.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>${msg}</p></div>`;
       countEl.textContent = '';
       return;
     }
-
     countEl.textContent = `Showing ${filtered.length} of ${users.length} accounts`;
     listEl.innerHTML = filtered.map(buildRow).join('');
   }
@@ -618,7 +1078,6 @@
   const searches = { 'not-following-back': '', 'unfollowed-me': '', 'pending-requests': '' };
 
   function refreshAll() {
-    /* Tab 1: following but not in followers */
     if (state.following !== null && state.followers !== null) {
       const followerSet = new Set(
         state.followers.filter(u => u && u.username).map(u => u.username.toLowerCase())
@@ -626,43 +1085,23 @@
       const notBack = state.following.filter(u => u && u.username && !followerSet.has(u.username.toLowerCase()));
       renderList('not-following-back', notBack, searches['not-following-back']);
     }
-
-    /* Tab 2 */
-    if (state.unfollowed !== null) {
-      renderList('unfollowed-me', state.unfollowed, searches['unfollowed-me']);
-    }
-
-    /* Tab 3 */
-    if (state.pendingRequests !== null) {
-      renderList('pending-requests', state.pendingRequests, searches['pending-requests']);
-    }
+    if (state.unfollowed !== null) renderList('unfollowed-me', state.unfollowed, searches['unfollowed-me']);
+    if (state.pendingRequests !== null) renderList('pending-requests', state.pendingRequests, searches['pending-requests']);
   }
 
   /* ── Chips ── */
   function markChip(fileKey) {
     const chip = document.querySelector(`[data-file="${fileKey}"]`);
-    if (chip) {
-      chip.classList.remove('waiting');
-      chip.classList.add('loaded');
-    }
+    if (chip) { chip.classList.remove('waiting'); chip.classList.add('loaded'); }
   }
 
   /* ── File reading ── */
   function readFiles(files) {
-    const list = Array.from(files);
-    console.log('[Tracker] readFiles called with', list.length, 'file(s):', list.map(f => f.name));
-    if (list.length === 0) {
-      console.warn('[Tracker] readFiles: no files received');
-      return;
-    }
-    list.forEach(file => {
+    Array.from(files).forEach(file => {
       const fileKey = detectFileKey(file.name);
       if (!fileKey) return;
       const reader = new FileReader();
-      reader.onload = e => {
-        const users = parseFile(fileKey, e.target.result);
-        processFile(fileKey, users);
-      };
+      reader.onload = e => processFile(fileKey, parseFile(fileKey, e.target.result));
       reader.onerror = () => console.error('[Tracker] FileReader error for', file.name);
       reader.readAsText(file);
     });
@@ -672,38 +1111,13 @@
   const dropArea = document.getElementById('dropArea');
   const fileInput = document.getElementById('fileInput');
 
-  // Prevent the overlaid file input from silently eating drag events —
-  // pointer-events:none lets drags fall through to the parent div while
-  // programmatic .click() still opens the file picker on user click.
   fileInput.style.pointerEvents = 'none';
-
   dropArea.addEventListener('click', () => fileInput.click());
-
   dropArea.addEventListener('dragenter', e => { e.preventDefault(); e.stopPropagation(); });
-  dropArea.addEventListener('dragover',  e => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropArea.classList.add('drag-over');
-  });
-  dropArea.addEventListener('dragleave', e => {
-    // Only remove highlight when leaving the drop area itself, not a child
-    if (!dropArea.contains(e.relatedTarget)) {
-      dropArea.classList.remove('drag-over');
-    }
-  });
-  dropArea.addEventListener('drop', e => {
-    e.preventDefault();
-    e.stopPropagation();
-    dropArea.classList.remove('drag-over');
-    console.log('[Tracker] Drop event fired, files:', e.dataTransfer.files.length);
-    readFiles(e.dataTransfer.files);
-  });
-  fileInput.addEventListener('change', e => {
-    console.log('[Tracker] File input change, files:', e.target.files.length);
-    readFiles(e.target.files);
-    // Reset so the same file can be re-selected if needed
-    fileInput.value = '';
-  });
+  dropArea.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); dropArea.classList.add('drag-over'); });
+  dropArea.addEventListener('dragleave', e => { if (!dropArea.contains(e.relatedTarget)) dropArea.classList.remove('drag-over'); });
+  dropArea.addEventListener('drop', e => { e.preventDefault(); e.stopPropagation(); dropArea.classList.remove('drag-over'); readFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', e => { readFiles(e.target.files); fileInput.value = ''; });
 
   /* ── Tabs ── */
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -718,8 +1132,7 @@
   /* ── Search ── */
   document.querySelectorAll('.search-input').forEach(input => {
     input.addEventListener('input', () => {
-      const tab = input.dataset.tab;
-      searches[tab] = input.value;
+      searches[input.dataset.tab] = input.value;
       refreshAll();
     });
   });
