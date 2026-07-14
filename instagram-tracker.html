@@ -52,8 +52,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
     .hero-badge   { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
-    .hero h1      { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
-    .hero-tagline { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both; }
+    .hero-tagline { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both; }
     .hero-cta     { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.46s both; }
 
     /* Scroll-triggered elements */
@@ -69,8 +68,65 @@
       transform: translateY(0);
     }
 
+    /* ── Hero typewriter ── */
+    .tw-cursor {
+      display: inline-block;
+      -webkit-text-fill-color: var(--accent);
+      color: var(--accent);
+      font-weight: 400;
+      margin-left: 1px;
+      animation: twBlink 0.75s step-end infinite;
+    }
+    .tw-cursor.done { display: none; }
+    @keyframes twBlink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ── Hero cycling word ── */
+    .hero-cycle-wrap {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+      line-height: inherit;
+    }
+    .hero-cycle-word {
+      display: inline-block;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .hero-cycle-word.cycle-exit {
+      animation: cycleExit 0.3s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+    }
+    .hero-cycle-word.cycle-enter {
+      animation: cycleEnter 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes cycleExit {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-115%); }
+    }
+    @keyframes cycleEnter {
+      from { transform: translateY(115%); }
+      to   { transform: translateY(0); }
+    }
+
+    /* ── Hero subtitle ── */
+    .hero-subtitle {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-dim);
+      margin: 0 auto 36px;
+      max-width: 500px;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .hero-subtitle.visible { opacity: 1; }
+
     @media (prefers-reduced-motion: reduce) {
-      .hero-badge, .hero h1, .hero-tagline, .hero-cta { animation: none; }
+      .hero-badge, .hero-tagline, .hero-cta { animation: none; }
+      .tw-cursor { animation: none; display: none; }
+      .hero-cycle-word { animation: none !important; transform: none !important; }
+      .hero-subtitle { opacity: 1; transition: none; }
       .reveal { opacity: 1; transform: none; transition: none; }
     }
 
@@ -157,7 +213,7 @@
       font-weight: 400;
       color: var(--text-muted);
       max-width: 560px;
-      margin: 0 auto 36px;
+      margin: 0 auto 10px;
       line-height: 1.65;
     }
     .hero-cta { display: inline-block; }
@@ -243,10 +299,10 @@
       margin-bottom: 8px;
     }
     .feature-desc {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 400;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     /* ── How-to section ── */
@@ -302,10 +358,10 @@
       gap: 7px;
     }
     .step-body li {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 400;
       color: var(--text-muted);
-      line-height: 1.6;
+      line-height: 1.8;
     }
     .step-body li strong { font-weight: 600; color: var(--text); }
     .step-files {
@@ -322,7 +378,7 @@
       border-radius: 6px;
       background: var(--surface3);
       border: 1px solid var(--border);
-      font-size: 12px;
+      font-size: 13px;
       font-family: "SF Mono", "Fira Code", Consolas, monospace;
       color: #fcb045;
     }
@@ -351,12 +407,12 @@
       list-style: none;
     }
     .tips-list li {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 400;
       color: var(--text-muted);
       padding-left: 18px;
       position: relative;
-      line-height: 1.6;
+      line-height: 1.7;
     }
     .tips-list li::before { content: '→'; position: absolute; left: 0; color: var(--text-dim); }
     .tips-list li strong { font-weight: 600; color: var(--text); }
@@ -385,9 +441,9 @@
     /* ── CTA block ── */
     .cta-block { text-align: center; padding: 24px 24px 80px; }
     .cta-block p {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 400;
-      color: var(--text-dim);
+      color: #aaa;
       margin-top: 14px;
     }
 
@@ -395,9 +451,9 @@
     .landing-footer {
       text-align: center;
       padding: 20px 24px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 400;
-      color: var(--text-dim);
+      color: #777;
       border-top: 1px solid var(--border);
     }
 
@@ -714,8 +770,9 @@
       <span class="hero-badge-dot"></span>
       100% free &amp; runs in your browser
     </div>
-    <h1>Followers Tracker</h1>
-    <p class="hero-tagline">See who doesn't follow you back — no login, no data collection, just your Instagram export files</p>
+    <h1><span id="typewriter-text"></span><span class="tw-cursor" aria-hidden="true">|</span></h1>
+    <p class="hero-tagline">See who <span class="hero-cycle-wrap"><span class="hero-cycle-word" id="hero-cycle">doesn't follow</span></span> you back</p>
+    <p class="hero-subtitle" id="hero-subtitle">No login. No data collection. Just your Instagram export files.</p>
     <div class="hero-cta">
       <button class="btn-primary" onclick="document.getElementById('how-to').scrollIntoView({behavior:'smooth'})">
         Get Started ↓
@@ -935,6 +992,57 @@
 
 
 <script>
+  /* ── Hero animations ── */
+  (function () {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const phrases  = ["doesn't follow", 'stopped following', 'never followed', 'is ignoring'];
+    const fullText = 'Followers Tracker';
+    const twEl     = document.getElementById('typewriter-text');
+    const cursor   = document.querySelector('.tw-cursor');
+    const subtitle = document.getElementById('hero-subtitle');
+    const wordEl   = document.getElementById('hero-cycle');
+
+    // Reduced motion: show everything instantly, skip cycling
+    if (reducedMotion) {
+      twEl.textContent = fullText;
+      cursor.classList.add('done');
+      subtitle.classList.add('visible');
+      return;
+    }
+
+    // 1. Typewriter — 80ms per character, starts after 180ms
+    let i = 0;
+    function type() {
+      if (i < fullText.length) {
+        twEl.textContent += fullText[i++];
+        setTimeout(type, 80);
+      } else {
+        // Let cursor blink briefly, then hide it and reveal subtitle
+        setTimeout(function () {
+          cursor.classList.add('done');
+          subtitle.classList.add('visible');
+        }, 500);
+      }
+    }
+    setTimeout(type, 180);
+
+    // 2. Cycling word — flip-up every 2s, indefinitely
+    let idx = 0;
+    setInterval(function () {
+      wordEl.classList.add('cycle-exit');
+      setTimeout(function () {
+        wordEl.classList.remove('cycle-exit');
+        idx = (idx + 1) % phrases.length;
+        wordEl.textContent = phrases[idx];
+        wordEl.classList.add('cycle-enter');
+        setTimeout(function () {
+          wordEl.classList.remove('cycle-enter');
+        }, 320);
+      }, 300);
+    }, 2000);
+  })();
+
   /* ── View switching ── */
   function showTracker() {
     document.getElementById('view-landing').classList.remove('active');
